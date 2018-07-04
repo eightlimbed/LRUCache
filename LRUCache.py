@@ -32,7 +32,7 @@ class LRUCache:
 
         Functionality:
             get(key) - Returns the value of a key, if it exists.
-            set(key, val) - Creates new Node and adds it to the cache.
+            put(key, val) - Creates new Node and adds it to the cache.
             insert(node) - Inserts a Node into the list.
             remove(node) - Removes a Node from the list.
     '''
@@ -43,7 +43,7 @@ class LRUCache:
         self.tail = Node(None, None)
         # Head and Tail will point to eachother, making the list circular
         self.head.next = self.tail
-        self.tail.next = self.head
+        self.tail.prev = self.head
 
     def get(self, key):
         # When we get() an object, we also need to update it's hotness. In
@@ -52,11 +52,13 @@ class LRUCache:
             node = self.objects[key]
             self.remove(node)
             self.insert(node)
+            print('Retrieved {}'.format(node.val))
             return node.val
         else:
-            return -1 # not found
+            print('{} not found in cache!'.format(key))
+            return -1
 
-    def set(self, key, val):
+    def put(self, key, val):
         # If the key already exists in the cache, remove it first, then add it
         # again to update it's hotness.
         if key in self.objects:
@@ -74,6 +76,7 @@ class LRUCache:
             self.remove(lru_node)
             del self.objects[lru_node.key]
 
+        print('Added {}:{} to cache'.format(key, val))
 
     def insert(self, node):
         # We will insert new nodes at the tail
@@ -101,9 +104,13 @@ class LRUCache:
 
 if __name__ == '__main__':
     cache = LRUCache(2)
-    cache.set(1, 1)
-    cache.set(2, 2)
-    cache.print()
-    print(cache.get(1))
-    cache.set(3, 3)
-    cache.print()
+    cache.put(1, 1)
+    cache.put(2, 2)
+    cache.get(1)
+    cache.put(3, 3)
+    cache.get(2)
+    cache.put(4, 4)
+    cache.get(1)
+    cache.get(3)
+    cache.get(4)
+    cache.get(2)
